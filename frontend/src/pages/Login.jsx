@@ -68,6 +68,7 @@ const Login = () => {
             <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username</label>
             <input
               type="text"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -83,6 +84,7 @@ const Login = () => {
             <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password</label>
             <input
               type="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

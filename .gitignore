@@ -64,6 +64,24 @@ dist-ssr/
 htmlcov/
 .pytest_cache/
 .tox/
+test-results/
+playwright-report/
+playwright/.cache/
+coverage/
+coverage-report/
+coverage-final.json
+lcov.info
+*.lcov
+.nyc_output/
+reports/junit/
+reports/junit/*.xml
+*.junit.xml
+.vitest/
+jest-html-reporters-*/
+jest-results.json
+/.cache/puppeteer
+*.tap
+*.log-*.json
 
 # OS
 Thumbs.db

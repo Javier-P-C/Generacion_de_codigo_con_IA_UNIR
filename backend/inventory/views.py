@@ -11,7 +11,7 @@ from .models import Inventory
 from .serializers import InventoryIncreaseSerializer, InventorySerializer
 
 
-class InventoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class InventoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Inventory.objects.select_related('product').all().order_by('id')
     serializer_class = InventorySerializer
     permission_classes = [IsAuthenticated]

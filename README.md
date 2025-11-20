@@ -265,12 +265,238 @@ Key variables:
 - `FRONTEND_ORIGIN`: Frontend URL for CORS
 - `VITE_API_URL`: Backend API URL for frontend
 
+## 🧪 Testing
+
+This project includes comprehensive unit and integration tests for both backend and frontend.
+
+### Backend Tests
+
+#### Running All Backend Tests
+
+```bash
+# Inside Docker container
+docker-compose exec backend python manage.py test
+
+# Outside Docker (requires local Python environment)
+cd backend
+python manage.py test
+```
+
+#### Running Specific Test Modules
+
+```bash
+# Test authentication
+docker-compose exec backend python manage.py test authapp
+
+# Test employees
+docker-compose exec backend python manage.py test employees
+
+# Test products
+docker-compose exec backend python manage.py test products
+
+# Test inventory
+docker-compose exec backend python manage.py test inventory
+
+# Test sales
+docker-compose exec backend python manage.py test sales
+
+# Run integration tests
+docker-compose exec backend python manage.py test integration_tests
+```
+
+#### Backend Test Coverage
+
+**Authentication Tests** (`authapp/tests.py`):
+- ✅ JWT token generation on login
+- ✅ Token refresh functionality
+- ✅ Manager access to restricted endpoints
+- ✅ Assistant blocked from manager endpoints
+- ✅ Unauthenticated access blocked
+
+**Employee Tests** (`employees/tests.py`):
+- ✅ Create employee (Manager only)
+- ✅ Edit employee (Manager only)
+- ✅ Delete employee (Manager only)
+- ✅ List employees (all authenticated)
+- ✅ Permission validation
+
+**Product Tests** (`products/tests.py`):
+- ✅ List products
+- ✅ Create product with valid presentation
+- ✅ Validate decimal price
+- ✅ Edit product
+- ✅ Delete product
+- ✅ Invalid data validation
+
+**Inventory Tests** (`inventory/tests.py`):
+- ✅ List inventory
+- ✅ Increase inventory (Manager only)
+- ✅ Prevent negative inventory
+- ✅ Validate non-negative quantities
+- ✅ Auto-creation on product creation
+
+**Sales Tests** (`sales/tests.py`):
+- ✅ Create sale with multiple products
+- ✅ Validate stock per item
+- ✅ Calculate subtotals
+- ✅ Calculate total price
+- ✅ Verify inventory reduction
+- ✅ Employees can list sales
+- ✅ Employees can view sale details
+- ✅ Insufficient stock handling
+
+**Integration Tests** (`integration_tests.py`):
+- ✅ Complete login flow with token storage
+- ✅ Automatic token refresh
+- ✅ Authenticated vs unauthenticated access
+- ✅ Role-based route protection
+- ✅ Complete CRUD workflows
+- ✅ End-to-end sale process with inventory updates
+
+### Frontend Tests
+
+#### Running Frontend Unit Tests
+
+```bash
+# Inside frontend directory
+cd frontend
+
+# Install dependencies (first time only)
+npm install
+
+# Run tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+#### Frontend Unit Test Coverage
+
+**Component Tests** (`src/__tests__/components.test.jsx`):
+- ✅ Layout component renders without error
+- ✅ Navigation links display correctly
+- ✅ ProtectedRoute authentication check
+- ✅ Role-based component visibility
+
+**Page Tests** (`src/__tests__/pages.test.jsx`):
+- ✅ Login page renders
+- ✅ Form validation (empty fields)
+- ✅ Error message display
+- ✅ Dashboard, Products, Inventory, Sales pages render
+- ✅ RegisterSale, Employees pages render
+
+### Frontend E2E Tests (Playwright)
+
+#### Running E2E Tests
+
+```bash
+# Inside frontend directory
+cd frontend
+
+# Install Playwright browsers (first time only)
+npx playwright install
+
+# Run E2E tests
+npm run e2e
+
+# Run E2E tests with UI
+npm run e2e:ui
+```
+
+#### E2E Test Coverage
+
+**Authentication Flow** (`e2e/auth.spec.js`):
+- ✅ Complete login with valid credentials
+- ✅ Login with invalid credentials shows error
+- ✅ Authenticated user can access application
+- ✅ Unauthenticated user redirected to login
+- ✅ Assistant blocked from manager routes
+- ✅ Logout functionality
+
+**Integration Workflows** (`e2e/integration.spec.js`):
+- ✅ Create employee and verify in table
+- ✅ Edit employee from UI
+- ✅ Create product and verify in table
+- ✅ Edit product from UI
+- ✅ Delete product and verify removal
+- ✅ Invalid product data shows errors
+- ✅ Show complete inventory list
+- ✅ Increase inventory as manager
+- ✅ Register sale with multiple products
+- ✅ Sale with insufficient stock shows error
+- ✅ Sales list loaded correctly
+- ✅ View sale detail
+- ✅ All screens load after login
+- ✅ Success messages on create/edit operations
+
+### Test Statistics
+
+| Test Type | Location | Count | Coverage |
+|-----------|----------|-------|----------|
+| **Backend Unit** | `backend/*/tests.py` | 80+ tests | Authentication, CRUD, Validations |
+| **Backend Integration** | `backend/integration_tests.py` | 20+ tests | End-to-end workflows |
+| **Frontend Unit** | `frontend/src/__tests__/` | 15+ tests | Components, Pages, Forms |
+| **Frontend E2E** | `frontend/e2e/` | 20+ tests | Complete user journeys |
+| **Total** | - | **135+ tests** | Full stack coverage |
+
+### Running All Tests
+
+#### Quick Test (All Tests at Once)
+
+**Linux/Mac:**
+```bash
+chmod +x run-tests.sh
+./run-tests.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\run-tests.ps1
+```
+
+#### Manual Testing
+
+```bash
+# Backend tests
+docker-compose exec backend python manage.py test
+
+# Frontend unit tests
+cd frontend && npm test
+
+# Frontend E2E tests (requires app running)
+docker-compose up -d
+cd frontend && npm run e2e
+```
+
+### Continuous Integration
+
+For CI/CD pipelines, run tests in this order:
+
+1. **Backend Tests**: `docker-compose run backend python manage.py test`
+2. **Frontend Unit Tests**: `cd frontend && npm test -- --run`
+3. **Build Frontend**: `cd frontend && npm run build`
+4. **E2E Tests**: Requires running application
+
+### Test Development Guidelines
+
+- **Backend**: Add tests in respective app's `tests.py`
+- **Frontend Unit**: Add to `src/__tests__/`
+- **Frontend E2E**: Add to `e2e/` directory
+- Always test both success and failure cases
+- Test authentication and permissions
+- Verify error messages and validation
+
 ## 📝 Code Quality
 
 - **Backend**: PEP8 compliant, type hints, docstrings
 - **Frontend**: Clean component structure, proper state management
-- **Testing**: Comprehensive unit tests for all critical logic
+- **Testing**: 135+ comprehensive unit and integration tests
 - **Error Handling**: Proper validation and error messages
+- **Coverage**: Critical business logic fully tested
 
 ## 🚢 Deployment Notes
 
